@@ -7,6 +7,14 @@ img {
   width: 250px; /* Set a small width */
 }
 
+p {
+    margin: 5px;
+}
+
+img {
+    font-style: italic;
+}
+
 .fieldWrapper {
     width: 20%;
 }
@@ -17,4 +25,9 @@ textarea {
 
 .fieldWrapper {
     padding-bottom: 5px;
+}
+
+#date_creation {
+    font-size: small;
+    color: gray;
 }
