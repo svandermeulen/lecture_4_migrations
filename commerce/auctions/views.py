@@ -67,7 +67,7 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def create_view(request):
+def create_listing_view(request):
     if request.method == "POST":
         form = NewListingForm(request.POST)
         if form.is_valid():
@@ -89,3 +89,8 @@ def create_view(request):
 
     context = {"form": NewListingForm()}
     return render(request, "auctions/create.html", context)
+
+
+def listing_view(request, listing):
+    context = {"listing": AuctionListing.objects.get(title=listing)}
+    return render(request, "auctions/listing.html", context=context)

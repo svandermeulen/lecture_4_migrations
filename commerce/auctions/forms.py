@@ -11,10 +11,9 @@ class NewListingForm(Form):
     title = CharField(label="title", initial="")
     description = CharField(widget=Textarea, label="description", initial="")
     starting_bid = DecimalField(label="starting_bid", initial=0.0, decimal_places=1)
-    category = CharField(label="category", initial="", required=False)
+    category = CharField(label="category", initial="", required=False, empty_value="No Category Listed")
     image_url = URLField(label="image_url", initial="", required=False)
-    active = BooleanField(label="active", required=True, initial=True)
-
+    
 
 def main():
     pass

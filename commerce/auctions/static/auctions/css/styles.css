@@ -7,6 +7,10 @@ img {
   width: 250px; /* Set a small width */
 }
 
+#img_enlarged {
+    width: 500px;
+}
+
 p {
     margin: 5px;
 }
