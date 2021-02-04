@@ -15,6 +15,15 @@ class AuctionListing(models.Model):
     image_url = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
+    current_price = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        """
+        Set the current price equal to the starting bid if no bids have been placed yet
+        """
+        if not self.current_price:
+            self.current_price = self.starting_bid
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.id}: \n" \
@@ -25,3 +34,10 @@ class AuctionListing(models.Model):
                f"image_url: {self.image_url}\n" \
                f"active: {self.active}\n" \
                f"date created: {self.date_creation}"
+
+
+class Bid(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
+    bid = models.FloatField()
+    date_creation = models.DateTimeField(auto_now_add=True)

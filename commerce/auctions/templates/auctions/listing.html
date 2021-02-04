@@ -7,9 +7,9 @@
 {% block body %}
 
     <h2>Listing: {{ listing.title }}</h2>
-     <img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged">
+    <img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged">
     <p id="description">{{ listing.description }}</p>
-    <p id="price"><strong>Price:</strong> ${{ listing.starting_bid }}</p>
+    <p id="price"><strong>Price:</strong> ${{ listing.current_price }}</p>
 
     <h4>Details:</h4>
     <ul>
@@ -17,5 +17,16 @@
         <li>Listed on: {{ listing.date_creation }}</li>
         <li>Category: {{ listing.user.category }}</li>
     </ul>
+
+    <form action="{% url 'auctions:bid' listing.id %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-success" title="Bid" value="Place Bid">
+    </form>
 
 {% endblock %}

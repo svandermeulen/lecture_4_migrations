@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .forms import NewListingForm
-from .models import User, AuctionListing
+from .forms import NewListingForm, NewBidForm
+from .models import User, AuctionListing, Bid
 
 
 def index(request):
@@ -78,7 +78,7 @@ def create_listing_view(request):
                 starting_bid=form.cleaned_data["starting_bid"],
                 category=form.cleaned_data["category"],
                 image_url=form.cleaned_data["image_url"],
-                active=form.cleaned_data["active"]
+                current_price=form.cleaned_data["starting_bid"]
             )
             listing.save()
             return redirect("auctions:index")
@@ -91,6 +91,32 @@ def create_listing_view(request):
     return render(request, "auctions/create.html", context)
 
 
-def listing_view(request, listing):
-    context = {"listing": AuctionListing.objects.get(title=listing)}
+def listing_view(request, listing: str):
+    context = {
+        "listing": AuctionListing.objects.get(title=listing),
+        "form": NewBidForm()
+    }
     return render(request, "auctions/listing.html", context=context)
+
+
+def place_bid(request, listing_id: int):
+    listing = AuctionListing.objects.get(id=listing_id)
+    if request.method == "POST":
+
+        form = NewBidForm(request.POST)
+        if form.is_valid():
+
+            # Create new entry in the Bid table
+            bid = Bid(
+                bid=form.cleaned_data["bid"],
+                user=request.user,
+                listing=listing
+            )
+            bid.save()
+
+            # Change the price in the AuctionListing table
+            listing.current_price = bid.bid
+            listing.save()
+            return redirect("auctions:index")
+
+    return redirect("auctions:listing", listing=listing.title)
