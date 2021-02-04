@@ -13,7 +13,7 @@
                     <h4>{{ listing.title }}</h4>
                     <p id="price"><em>Price:</em> ${{ listing.starting_bid }}</p>
                     <p id="description">{{ listing.description }}</p>
-                    <p id="date_creation">Created: {{ listing.date_creation|date:'b d Y H:m'|title }}</p>
+                    <p id="date_creation">Created: {{ listing.date_creation|date:'D, b Y H:i'|title }}</p>
 
                 </div>
             </div>

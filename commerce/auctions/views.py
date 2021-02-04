@@ -72,6 +72,7 @@ def create_view(request):
         form = NewListingForm(request.POST)
         if form.is_valid():
             listing = AuctionListing(
+                user=request.user,
                 title=form.cleaned_data["title"],
                 description=form.cleaned_data["description"],
                 starting_bid=form.cleaned_data["starting_bid"],
