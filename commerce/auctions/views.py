@@ -1,14 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import User
+from .forms import NewListingForm
+from .models import User, AuctionListing
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+
+    listings_active = AuctionListing.objects.filter(active=True)
+    context = {"listings": listings_active}
+    return render(request, "auctions/index.html", context=context)
 
 
 def login_view(request):
@@ -22,7 +26,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("auctions:index"))
+            return redirect("auctions:index")
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -61,3 +65,26 @@ def register(request):
         return HttpResponseRedirect(reverse("auctions:index"))
     else:
         return render(request, "auctions/register.html")
+
+
+def create_view(request):
+    if request.method == "POST":
+        form = NewListingForm(request.POST)
+        if form.is_valid():
+            listing = AuctionListing(
+                title=form.cleaned_data["title"],
+                description=form.cleaned_data["description"],
+                starting_bid=form.cleaned_data["starting_bid"],
+                category=form.cleaned_data["category"],
+                image_url=form.cleaned_data["image_url"],
+                active=form.cleaned_data["active"]
+            )
+            listing.save()
+            return redirect("auctions:index")
+        return render(request, "auctions/create.html", {
+            "form": form,
+            "message": "Input is invalid"
+        })
+
+    context = {"form": NewListingForm()}
+    return render(request, "auctions/create.html", context)

@@ -2,6 +2,22 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+    <hr>
+    {% if listings %}
+        {% for listing in listings %}
+            <div class="row justify-content-start">
+                <div class="col-3 text-center">
+                    <img src="{{ listing.image_url }}" alt="Test image">
+                </div>
+                <div class="col-9">
+                    <h4>{{ listing.title }}</h4>
+                    <p id="price"><b>Price:</b> ${{ listing.starting_bid }}</p>
+                    <p id="description">{{ listing.description }}</p>
 
-    TODO
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}

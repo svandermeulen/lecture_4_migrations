@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listing:</h2>
+
+    {% if message %}
+        <script>
+            alert("{{ message }}");
+        </script>
+    {% endif %}
+
+    <form action="{% url 'auctions:create' %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.name.capitalize }}: <br>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-success" title="Save" value="Save">
+        <a href="{% url 'auctions:index' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+{% endblock %}
