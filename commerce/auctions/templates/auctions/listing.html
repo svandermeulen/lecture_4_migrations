@@ -9,6 +9,7 @@
     <h2>Listing: {{ listing.title }}</h2>
     <img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged">
     <p id="description">{{ listing.description }}</p>
+    <p id="bid_count">{{ listing.get_bid_count }} bid(s)</p>
     <p id="price"><strong>Price:</strong> ${{ listing.current_price }}</p>
 
     <h4>Details:</h4>

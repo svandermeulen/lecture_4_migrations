@@ -16,6 +16,10 @@ class AuctionListing(models.Model):
     active = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     current_price = models.FloatField()
+    bid_count = models.IntegerField(default=0)
+
+    def get_bid_count(self):
+        return Bid.objects.filter(listing=self).count()
 
     def save(self, *args, **kwargs):
         """
@@ -23,6 +27,7 @@ class AuctionListing(models.Model):
         """
         if not self.current_price:
             self.current_price = self.starting_bid
+
         super().save(*args, **kwargs)
 
     def __str__(self):
