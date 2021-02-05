@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -26,7 +27,8 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return redirect("auctions:index")
+            next_page = request.POST.get('next')
+            return HttpResponseRedirect(next_page)
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -99,6 +101,7 @@ def listing_view(request, listing: str):
     return render(request, "auctions/listing.html", context=context)
 
 
+@login_required
 def place_bid(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
     if request.method == "POST":

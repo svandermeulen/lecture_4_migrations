@@ -51,6 +51,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'commerce.urls'
+LOGIN_URL = 'auctions:login'
 
 TEMPLATES = [
     {
