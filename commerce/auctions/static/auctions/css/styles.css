@@ -35,3 +35,12 @@ textarea {
     font-size: small;
     color: gray;
 }
+
+#bid_count {
+    font-size: smaller;
+}
+
+#price_listing {
+    font-size: x-large;
+    font-weight: bold;
+}

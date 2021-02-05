@@ -5,7 +5,7 @@
     <hr>
     {% if listings %}
         {% for listing in listings %}
-            <a href="{% url 'auctions:listing' listing.title %}">
+            <a href="{% url 'auctions:listing' listing.id %}">
                 <div class="row justify-content-start">
                     <div class="col-3 text-center">
                         <img src="{{ listing.image_url }}" alt="No image url provided">

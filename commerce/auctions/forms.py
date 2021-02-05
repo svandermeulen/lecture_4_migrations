@@ -4,7 +4,10 @@ Written by: sme30393
 Date: 04/02/2021
 """
 
-from django.forms import Form, CharField, Textarea, DecimalField, URLField, BooleanField, DateTimeField
+from django.forms import Form, CharField, Textarea, DecimalField, URLField, BooleanField, DateTimeField, ModelForm, \
+    TextInput
+
+from .models import Bid
 
 
 class NewListingForm(Form):
@@ -15,8 +18,13 @@ class NewListingForm(Form):
     image_url = URLField(label="image_url", initial="", required=False)
 
 
-class NewBidForm(Form):
-    bid = DecimalField(label="bid", initial=0.0, decimal_places=2)
+class NewBidForm(ModelForm):
+    class Meta:
+        model = Bid
+        fields = ('bid',)
+        widgets = {
+            'bid': TextInput(attrs={'placeholder': 0.00})
+        }
 
 
 def main():

@@ -18,6 +18,9 @@ class AuctionListing(models.Model):
     current_price = models.FloatField()
     bid_count = models.IntegerField(default=0)
 
+    def get_latest_bid(self):
+        return Bid.objects.filter(listing=self).latest("date_creation")
+
     def get_bid_count(self):
         return Bid.objects.filter(listing=self).count()
 
@@ -31,14 +34,7 @@ class AuctionListing(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.id}: \n" \
-               f"title: {self.title}\n" \
-               f"description: {self.description}\n" \
-               f"starting bid: {self.starting_bid}\n" \
-               f"category: {self.category}\n" \
-               f"image_url: {self.image_url}\n" \
-               f"active: {self.active}\n" \
-               f"date created: {self.date_creation}"
+        return f"{self.id}: {self.title}"
 
 
 class Bid(models.Model):
