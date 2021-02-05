@@ -3,12 +3,6 @@
 {% block body %}
     <h2>Create Listing:</h2>
 
-    {% if message %}
-        <script>
-            alert("{{ message }}");
-        </script>
-    {% endif %}
-
     <form action="{% url 'auctions:create' %}" method="post">
         {% csrf_token %}
         {% for field in form %}

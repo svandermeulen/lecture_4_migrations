@@ -4,12 +4,6 @@
 
     <h2>Login</h2>
 
-    {% if message %}
-        <script>
-            alert('{{ message }}');
-        </script>
-    {% endif %}
-
     <form action="{% url 'auctions:login' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.GET.next }}" />
