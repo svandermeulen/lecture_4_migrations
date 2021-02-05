@@ -1,6 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout, decorators
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -9,9 +8,6 @@ from django.urls import reverse
 from .decorators import login_required_message_and_redirect
 from .forms import NewListingForm, NewBidForm
 from .models import User, AuctionListing, Bid
-
-
-setattr(decorators, 'login_required', login_required_message_and_redirect)
 
 
 def index(request):
@@ -104,7 +100,7 @@ def listing_view(request, listing: str):
     return render(request, "auctions/listing.html", context=context)
 
 
-@login_required(message="In order to place a bid you should be logged in")
+@login_required_message_and_redirect(message="In order to place a bid you should be logged in")
 def place_bid(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
     if request.method == "POST":
