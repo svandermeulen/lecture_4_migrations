@@ -1,5 +1,10 @@
+import logging
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+
+logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
@@ -18,20 +23,28 @@ class AuctionListing(models.Model):
     current_price = models.FloatField()
     bid_count = models.IntegerField(default=0)
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+        self.current_price = self.get_current_price()
+
     def get_latest_bid(self):
         return Bid.objects.filter(listing=self).latest("date_creation")
 
     def get_bid_count(self):
         return Bid.objects.filter(listing=self).count()
 
-    def save(self, *args, **kwargs):
+    def get_current_price(self):
         """
-        Set the current price equal to the starting bid if no bids have been placed yet
+        Return the latest bid
+        Return the starting bid if no bids have been placed yet
         """
-        if not self.current_price:
-            self.current_price = self.starting_bid
 
-        super().save(*args, **kwargs)
+        try:
+            return Bid.objects.filter(listing=self).latest("date_creation").bid
+        except Bid.DoesNotExist:
+            logger.debug(f"No bids have been placed yet, taking starting bid instead")
+            return self.starting_bid
 
     def __str__(self):
         return f"{self.id}: {self.title}"
