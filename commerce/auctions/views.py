@@ -5,12 +5,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-
 from .decorators import login_required_message_and_redirect
 from .forms import NewListingForm, NewBidForm
 from .models import User, AuctionListing, Bid
-
-
 
 
 def index(request):
@@ -127,14 +124,14 @@ def edit_listing_view(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
 
     form = NewListingForm(
-            initial={
-                "title": listing.title,
-                "description": listing.description,
-                "starting_bid": listing.starting_bid,
-                "category": listing.category,
-                "image_url": listing.image_url
-            }
-        )
+        initial={
+            "title": listing.title,
+            "description": listing.description,
+            "starting_bid": listing.starting_bid,
+            "category": listing.category,
+            "image_url": listing.image_url
+        }
+    )
 
     if listing.starting_bid != listing.current_price:
         form.fields["starting_bid"].widget.attrs["read_only"] = True
@@ -147,24 +144,15 @@ def edit_listing_view(request, listing_id: int):
     return render(request, "auctions/create.html", context)
 
 
-def close_listing_view(request, listing_id: int):
+def change_listing_acitivty_view(request, listing_id: int):
     """
-    Close the auction
-    """
-    listing = AuctionListing.objects.get(id=listing_id)
-    listing.active = False
-    listing.save()
-    return redirect("auctions:index")
-
-
-def reopen_listing_view(request, listing_id: int):
-    """
-    Reopen a closed auction
+    Open/close the auction of a listing
     """
     listing = AuctionListing.objects.get(id=listing_id)
-    listing.active = True
+    listing.active = not listing.active
     listing.save()
-    return redirect("auctions:index")
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
 
 
 @login_required_message_and_redirect(message="In order to place a bid you should be logged in")

@@ -44,12 +44,16 @@
 
     {% if user.is_authenticated %}
         {% if listing.user.username == user.username %}
-            <a href="{% url "auctions:edit" listing.id %}" class="btn btn-secondary">Edit</a>
-            {% if listing.active == False %}
-                <a href="{% url "auctions:reopen" listing.id %}" class="btn btn-success">Reopen Auction</a>
-            {% else %}
-                <a href="{% url "auctions:close" listing.id %}" class="btn btn-danger">Close Auction</a>
-            {% endif %}
+            <form name="create_station" method="post" action="{% url "auctions:open_close" listing.id %}">
+                {% csrf_token %}
+                <a href="{% url "auctions:edit" listing.id %}" class="btn btn-secondary">Edit</a>
+                <input type="hidden" name="next" value="{{ request.path }}">
+                {% if listing.active == False %}
+                    <input type="submit" class="btn btn-success" value="Reopen Auction"/>
+                {% else %}
+                    <input type="submit" class="btn btn-danger" value="Close Auction"/>
+                {% endif %}
+            </form>
         {% endif %}
     {% endif %}
 
