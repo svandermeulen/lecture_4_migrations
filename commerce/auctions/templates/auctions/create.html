@@ -12,9 +12,13 @@
         {% csrf_token %}
         {% for field in form %}
             <div class="fieldWrapper">
-                {{ field.errors }}
-                {{ field.name.capitalize }}: <br>
-                {{ field }}
+                {% if not field.is_hidden %}
+                    {{ field.errors }}
+                    {{ field.name.capitalize }}: <br>
+                    {{ field }}
+                {% else %}
+                    {{ field.as_hidden }}
+                {% endif %}
             </div>
         {% endfor %}
 

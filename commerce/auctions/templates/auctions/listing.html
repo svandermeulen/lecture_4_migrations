@@ -21,7 +21,7 @@
         {% endif %}
     </p>
 
-    {% if user.is_authenticated and user.username != listing.user.username %}
+    {% if user.username != listing.user.username %}
         <form action="{% url 'auctions:bid' listing.id %}" method="post">
             {% csrf_token %}
             {% for field in form %}

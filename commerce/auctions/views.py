@@ -5,9 +5,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+
 from .decorators import login_required_message_and_redirect
 from .forms import NewListingForm, NewBidForm
 from .models import User, AuctionListing, Bid
+
+
 
 
 def index(request):
@@ -122,16 +125,23 @@ def listing_view(request, listing_id: int):
 
 def edit_listing_view(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
-    context = {
-        "form": NewListingForm(
+
+    form = NewListingForm(
             initial={
                 "title": listing.title,
                 "description": listing.description,
-                "starting_bid": listing.current_price,
+                "starting_bid": listing.starting_bid,
                 "category": listing.category,
                 "image_url": listing.image_url
             }
-        ),
+        )
+
+    if listing.starting_bid != listing.current_price:
+        form.fields["starting_bid"].widget.attrs["read_only"] = True
+        form.fields["starting_bid"].widget = form.fields["starting_bid"].hidden_widget()
+
+    context = {
+        "form": form,
         "listing_id": listing.id
     }
     return render(request, "auctions/create.html", context)
@@ -158,7 +168,7 @@ def reopen_listing_view(request, listing_id: int):
 
 
 @login_required_message_and_redirect(message="In order to place a bid you should be logged in")
-def place_bid(request, listing_id: str):
+def place_bid(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
     if request.method == "POST":
 
@@ -188,4 +198,4 @@ def place_bid(request, listing_id: str):
             listing.save()
             return redirect("auctions:index")
 
-    return redirect("auctions:listing", listing=listing.title)
+    return redirect("auctions:listing", listing_id=listing.id)
