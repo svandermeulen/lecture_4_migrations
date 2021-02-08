@@ -16,6 +16,12 @@ def index(request):
     return render(request, "auctions/index.html", context=context)
 
 
+def my_listings_view(request):
+    listings_user = AuctionListing.objects.filter(user=request.user)
+    context = {"listings": listings_user}
+    return render(request, "auctions/my_listings.html", context=context)
+
+
 def login_view(request):
     if request.method == "POST":
 
@@ -137,6 +143,16 @@ def close_listing_view(request, listing_id: int):
     """
     listing = AuctionListing.objects.get(id=listing_id)
     listing.active = False
+    listing.save()
+    return redirect("auctions:index")
+
+
+def reopen_listing_view(request, listing_id: int):
+    """
+    Reopen a closed auction
+    """
+    listing = AuctionListing.objects.get(id=listing_id)
+    listing.active = True
     listing.save()
     return redirect("auctions:index")
 

@@ -13,7 +13,9 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("bid/<idtitle:listing_id>", views.place_bid, name="bid"),
     path("create", views.create_listing_view, name="create"),
+    path("mylistings", views.my_listings_view, name="my_listings"),
     path("listing/<idtitle:listing_id>", views.listing_view, name="listing"),
     path("edit/<idtitle:listing_id>", views.edit_listing_view, name="edit"),
-    path("close/<idtitle:listing_id>", views.close_listing_view, name="close")
+    path("close/<idtitle:listing_id>", views.close_listing_view, name="close"),
+    path("reopen/<idtitle:listing_id>", views.reopen_listing_view, name="reopen")
 ]

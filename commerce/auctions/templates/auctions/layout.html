@@ -26,6 +26,9 @@
             <a class="nav-link" href="{% url 'auctions:create' %}">Create Listing</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{% url 'auctions:my_listings' %}">My Listings</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'auctions:logout' %}">Log Out</a>
         </li>
     {% else %}
