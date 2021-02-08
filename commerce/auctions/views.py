@@ -115,7 +115,6 @@ def listing_view(request, listing_id: int):
 
 
 def edit_listing_view(request, listing_id: int):
-
     listing = AuctionListing.objects.get(id=listing_id)
     context = {
         "form": NewListingForm(
@@ -132,8 +131,14 @@ def edit_listing_view(request, listing_id: int):
     return render(request, "auctions/create.html", context)
 
 
-def close_listing_view(request):
-    pass
+def close_listing_view(request, listing_id: int):
+    """
+    Close the auction
+    """
+    listing = AuctionListing.objects.get(id=listing_id)
+    listing.active = False
+    listing.save()
+    return redirect("auctions:index")
 
 
 @login_required_message_and_redirect(message="In order to place a bid you should be logged in")
