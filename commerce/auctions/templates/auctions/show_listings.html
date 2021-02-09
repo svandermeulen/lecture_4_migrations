@@ -2,36 +2,40 @@
 
 {% if listings %}
     {% for listing in listings %}
-        <a href="{% url 'auctions:listing' listing.id %}" class="anchor">
-            <div class="row justify-content-start">
-                <div class="col-3 text-center">
+        <div class="row justify-content-start">
+            <div class="col-2 text-center">
+                <a href="{% url 'auctions:listing' listing.id %}" class="anchor">
                     <img src="{{ listing.image_url }}" alt="No image url provided">
-                </div>
-                <div class="col-9">
-
+                </a>
+            </div>
+            <div class="col-3">
+                <a href="{% url 'auctions:listing' listing.id %}" class="anchor">
                     <h4>{{ listing.title }}</h4>
                     <p id="price"><em>Price:</em> ${{ listing.current_price }}</p>
                     <p id="description">{{ listing.description }}</p>
                     <p id="date_creation">Created: {{ listing.date_creation|date:'D, d b Y H:i'|title }}</p>
-                    {% if listing.active %}
-                        <span class="badge badge-pill badge-primary">Active</span>
-                    {% else %}
-                        <span class="badge badge-pill badge-warning">Closed</span>
-                    {% endif %}
-                    {% if request.user.id != listing.user.id and not request.user.is_anonymous %}
-                        {% if not watched|get_item:listing.id %}
-                            <a href="{% url 'auctions:add_to_watchlist' listing.id %}"
-                               class="badge badge-pill badge-success">Add to watchlist</a>
-                        {% else %}
-                            <a href="{% url 'auctions:remove_from_watchlist' listing.id %}"
-                               class="badge badge-pill badge-warning">Remove from watchlist</a>
-                        {% endif %}
-                    {% elif request.user.id == listing.user.id %}
-                        <a href="{% url 'auctions:my_listings' %}" class="badge badge-pill badge-secondary">Owned</a>
-                    {% endif %}
-                </div>
+                </a>
             </div>
-        </a>
+            <div class="col-3">
+                {% if listing.active %}
+                    <span class="badge badge-pill badge-primary">Active</span>
+                {% else %}
+                    <span class="badge badge-pill badge-secondary">Closed</span>
+                {% endif %}
+                {% if request.user.id != listing.user.id and not request.user.is_anonymous %}
+                    {% if not watched|get_item:listing.id %}
+                        <a href="{% url 'auctions:add_to_watchlist' listing.id %}"
+                           class="badge badge-pill badge-success">Add to watchlist</a>
+                    {% else %}
+                        <a href="{% url 'auctions:remove_from_watchlist' listing.id %}"
+                           class="badge badge-pill badge-warning">Remove from watchlist</a>
+                    {% endif %}
+                {% elif request.user.id == listing.user.id %}
+                    <a href="{% url 'auctions:my_listings' %}"
+                       class="badge badge-pill badge-secondary">Owned</a>
+                {% endif %}
+            </div>
+        </div>
         <hr>
     {% endfor %}
 {% endif %}

@@ -3,11 +3,9 @@
 
 {% block body %}
     {% if listings %}
-        <h2>Watchlist ({{ listings|length }}) </h2>
+        <h2>My biddings ({{ listings|length }}) </h2>
         <hr>
         {% show_listings request listings watched %}
     {% endif %}
-
-    <a href="{% url 'auctions:index' %}">Go to active listings</a>
 
 {% endblock %}

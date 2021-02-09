@@ -58,6 +58,13 @@ def watch_list_view(request):
     return render(request, "auctions/watchlist.html")
 
 
+def my_biddings_view(request):
+    bidding_list = Bid.objects.filter(user=request.user)
+    if bidding_list.first():
+        listings = list({bidding.listing for bidding in bidding_list})
+        return render(request, "auctions/biddings.html", context=get_listings_context(request, listings=listings))
+
+
 @login_required_message_and_redirect(message="In order to add listings to your wishlist you should log in")
 def add_to_watchlist(request, listing_id: int):
     listings = AuctionListing.objects.get(id=listing_id)
