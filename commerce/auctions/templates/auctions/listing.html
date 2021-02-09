@@ -6,33 +6,47 @@
 
 {% block body %}
 
-    <h2>Listing: {{ listing.title }}</h2>
-    <img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged">
+    {% if not listing.active %}
+        <h2>Listing: {{ listing.title }}</h2>
+        <span class="badge badge-pill badge-secondary">Closed</span>
+    {% else %}
+        <h2>Listing: {{ listing.title }}</h2>
+    {% endif %}
+    <p><img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged"></p>
     <p id="description">{{ listing.description }}</p>
     <br>
     <p id="starting_bid">Starting bid: ${{ listing.starting_bid }}</p>
-    {% if listing.get_bid_count > 0 %}
-        <p id="price_listing">Latest bid: ${{ listing.current_price }}</p>
-    {% endif %}
-    <p id="bid_count">
-        {{ listing.get_bid_count }} bid(s) so far.
-        {% if listing.get_bid_count > 0 and listing.get_latest_bid.user.username == user.username %}
-            Your bid is the current bid.
-        {% endif %}
-    </p>
 
-    {% if user.username != listing.user.username %}
-        <form action="{% url 'auctions:bid' listing.id %}" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="fieldWrapper">
-                    {{ field.errors }}
-                    {{ field }}
-                </div>
-            {% endfor %}
-            <input type="submit" class="btn btn-primary" title="Bid" value="Place Bid">
-        </form>
+    {% if listing.active %}
+        {% if listing.get_bid_count > 0 %}
+            <p class="price_listing">Latest bid: ${{ listing.current_price }}</p>
+        {% endif %}
+
+        <p id="bid_count">
+            {{ listing.get_bid_count }} bid(s) so far.
+            {% if listing.get_latest_bid.user.username == user.username %}
+                Your bid is the current bid.
+            {% endif %}
+        </p>
+
+        {% if user.username != listing.user.username %}
+            <form action="{% url 'auctions:bid' listing.id %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="fieldWrapper">
+                        {{ field.errors }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-primary" title="Bid" value="Place Bid">
+            </form>
+        {% endif %}
+    {% else %}
+        {% if listing.get_latest_bid.user.username == user.username %}
+            <p class="price_listing">You have won the auction with a bid of: ${{ listing.current_price }}</p>
+        {% endif %}
     {% endif %}
+
     <hr>
     <h4>Details:</h4>
     <ul>

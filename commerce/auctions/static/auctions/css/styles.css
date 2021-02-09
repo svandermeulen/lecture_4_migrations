@@ -44,7 +44,6 @@ textarea {
     font-size: smaller;
 }
 
-#price_listing {
-    font-size: x-large;
+.price_listing {
     font-weight: bold;
 }
