@@ -11,30 +11,30 @@ from django.urls import reverse
 
 from .decorators import login_required_message_and_redirect
 from .forms import NewListingForm, NewBidForm
-from .models import User, AuctionListing, Bid, WishList
+from .models import User, AuctionListing, Bid, WatchList
 
 
-def in_wishlist(request, listing: AuctionListing) -> bool:
+def in_watchlist(request, listing: AuctionListing) -> bool:
     if isinstance(request.user, AnonymousUser):
         return False
 
     try:
-        wished = WishList.objects.get(user=request.user, listing=listing)
+        _ = WatchList.objects.get(user=request.user, listing=listing)
         return True
-    except WishList.DoesNotExist or TypeError:
+    except WatchList.DoesNotExist or TypeError:
         return False
 
 
-def query_wishlist(request, listings: QuerySet) -> dict:
-    return {listing.id: in_wishlist(request, listing=listing) for listing in listings}
+def query_watchlist(request, listings: QuerySet) -> dict:
+    return {listing.id: in_watchlist(request, listing=listing) for listing in listings}
 
 
 def get_listings_context(request, listings: Union[QuerySet, List[AuctionListing]]) -> dict:
-    wished = query_wishlist(request=request, listings=listings)
+    watched = query_watchlist(request=request, listings=listings)
     return {
         "request": request,
         "listings": listings,
-        "wished": wished
+        "watched": watched
     }
 
 
@@ -48,35 +48,35 @@ def my_listings_view(request):
     return render(request, "auctions/my_listings.html", context=get_listings_context(request, listings=listings))
 
 
-def wishlist_view(request):
-    wish_list = WishList.objects.filter(user=request.user)
+def watch_list_view(request):
+    watch_list = WatchList.objects.filter(user=request.user)
 
-    if wish_list.first():
-        listings = [wish.listing for wish in wish_list]
-        return render(request, "auctions/wishlist.html", context=get_listings_context(request, listings=listings))
-    messages.add_message(request, messages.INFO, "There are no listings in your wishlist yet")
-    return render(request, "auctions/wishlist.html")
+    if watch_list.first():
+        listings = [wish.listing for wish in watch_list]
+        return render(request, "auctions/watchlist.html", context=get_listings_context(request, listings=listings))
+    messages.add_message(request, messages.INFO, "There are no items in your watchlist yet")
+    return render(request, "auctions/watchlist.html")
 
 
 @login_required_message_and_redirect(message="In order to add listings to your wishlist you should log in")
-def add_to_wishlist(request, listing_id: int):
-    listing_wished = AuctionListing.objects.get(id=listing_id)
+def add_to_watchlist(request, listing_id: int):
+    listings = AuctionListing.objects.get(id=listing_id)
 
-    wishlist = WishList(
+    watch_list = WatchList(
         user=request.user,
-        listing=listing_wished
+        listing=listings
     )
-    wishlist.save()
-    return redirect("auctions:wishlist")
+    watch_list.save()
+    return redirect("auctions:watchlist")
 
 
-def remove_from_wishlist(request, listing_id: int):
+def remove_from_watchlist(request, listing_id: int):
     listing = AuctionListing.objects.get(id=listing_id)
-    wishlist = WishList.objects.get(
+    watchlist = WatchList.objects.get(
         user=request.user,
         listing=listing
     )
-    wishlist.delete()
+    watchlist.delete()
     return redirect("auctions:index")
 
 

@@ -19,12 +19,12 @@
                         <span class="badge badge-pill badge-warning">Closed</span>
                     {% endif %}
                     {% if request.user.id != listing.user.id and not request.user.is_anonymous %}
-                        {% if not wished|get_item:listing.id %}
-                            <a href="{% url 'auctions:add_to_wishlist' listing.id %}"
-                               class="badge badge-pill badge-success">Add to Wishlist</a>
+                        {% if not watched|get_item:listing.id %}
+                            <a href="{% url 'auctions:add_to_watchlist' listing.id %}"
+                               class="badge badge-pill badge-success">Add to watchlist</a>
                         {% else %}
-                            <a href="{% url 'auctions:remove_from_wishlist' listing.id %}"
-                               class="badge badge-pill badge-warning">Remove from Wishlist</a>
+                            <a href="{% url 'auctions:remove_from_watchlist' listing.id %}"
+                               class="badge badge-pill badge-warning">Remove from watchlist</a>
                         {% endif %}
                     {% elif request.user.id == listing.user.id %}
                         <a href="{% url 'auctions:my_listings' %}" class="badge badge-pill badge-secondary">Owned</a>

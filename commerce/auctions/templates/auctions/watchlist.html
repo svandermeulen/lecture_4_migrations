@@ -3,9 +3,9 @@
 
 {% block body %}
     {% if listings %}
-        <h2>Wishlist ({{ listings|length }}) </h2>
+        <h2>watchlist ({{ listings|length }}) </h2>
         <hr>
-        {% show_listings request listings wished %}
+        {% show_listings request listings watched %}
     {% endif %}
 
     <a href="{% url 'auctions:index' %}">Go to active listings</a>
