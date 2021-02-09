@@ -1,25 +1,83 @@
+from typing import List, Union
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import AnonymousUser
 from django.db import IntegrityError
+from django.db.models import QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .decorators import login_required_message_and_redirect
 from .forms import NewListingForm, NewBidForm
-from .models import User, AuctionListing, Bid
+from .models import User, AuctionListing, Bid, WishList
+
+
+def in_wishlist(request, listing: AuctionListing) -> bool:
+    if isinstance(request.user, AnonymousUser):
+        return False
+
+    try:
+        wished = WishList.objects.get(user=request.user, listing=listing)
+        return True
+    except WishList.DoesNotExist or TypeError:
+        return False
+
+
+def query_wishlist(request, listings: QuerySet) -> dict:
+    return {listing.id: in_wishlist(request, listing=listing) for listing in listings}
+
+
+def get_listings_context(request, listings: Union[QuerySet, List[AuctionListing]]) -> dict:
+    wished = query_wishlist(request=request, listings=listings)
+    return {
+        "request": request,
+        "listings": listings,
+        "wished": wished
+    }
 
 
 def index(request):
-    listings_active = AuctionListing.objects.filter(active=True)
-    context = {"listings": listings_active}
-    return render(request, "auctions/index.html", context=context)
+    listings = AuctionListing.objects.filter(active=True)
+    return render(request, "auctions/index.html", context=get_listings_context(request, listings=listings))
 
 
 def my_listings_view(request):
-    listings_user = AuctionListing.objects.filter(user=request.user)
-    context = {"listings": listings_user}
-    return render(request, "auctions/my_listings.html", context=context)
+    listings = AuctionListing.objects.filter(user=request.user)
+    return render(request, "auctions/my_listings.html", context=get_listings_context(request, listings=listings))
+
+
+def wishlist_view(request):
+    wish_list = WishList.objects.filter(user=request.user)
+
+    if wish_list.first():
+        listings = [wish.listing for wish in wish_list]
+        return render(request, "auctions/wishlist.html", context=get_listings_context(request, listings=listings))
+    messages.add_message(request, messages.INFO, "There are no listings in your wishlist yet")
+    return render(request, "auctions/wishlist.html")
+
+
+@login_required_message_and_redirect(message="In order to add listings to your wishlist you should log in")
+def add_to_wishlist(request, listing_id: int):
+    listing_wished = AuctionListing.objects.get(id=listing_id)
+
+    wishlist = WishList(
+        user=request.user,
+        listing=listing_wished
+    )
+    wishlist.save()
+    return redirect("auctions:wishlist")
+
+
+def remove_from_wishlist(request, listing_id: int):
+    listing = AuctionListing.objects.get(id=listing_id)
+    wishlist = WishList.objects.get(
+        user=request.user,
+        listing=listing
+    )
+    wishlist.delete()
+    return redirect("auctions:index")
 
 
 def login_view(request):

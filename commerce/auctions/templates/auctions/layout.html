@@ -23,6 +23,9 @@
     </li>
     {% if user.is_authenticated %}
         <li class="nav-item">
+            <a class="nav-link" href="{% url 'auctions:wishlist' %}">Wishlist</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'auctions:create' %}">Create Listing</a>
         </li>
         <li class="nav-item">
@@ -45,7 +48,7 @@
 {% if messages %}
     {% for message in messages %}
         {% if message.tags %}
-            {% if "{{ message.tags }} == error" %}
+            {% if "{{ message.tags }}" == "error" %}
                 <div class="alert alert-danger" role="alert">
                     {{ message }}
                 </div>

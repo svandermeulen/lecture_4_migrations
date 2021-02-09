@@ -55,3 +55,9 @@ class Bid(models.Model):
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
     bid = models.FloatField()
     date_creation = models.DateTimeField(auto_now_add=True)
+
+
+class WishList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
+    date_creation = models.DateTimeField(auto_now_add=True)

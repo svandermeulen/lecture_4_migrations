@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+{% load show_listings %}
+
+{% block body %}
+    {% if listings %}
+        <h2>Wishlist ({{ listings|length }}) </h2>
+        <hr>
+        {% show_listings request listings wished %}
+    {% endif %}
+
+    <a href="{% url 'auctions:index' %}">Go to active listings</a>
+
+{% endblock %}
