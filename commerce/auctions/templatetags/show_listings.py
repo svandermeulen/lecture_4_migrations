@@ -12,11 +12,11 @@ register = template.Library()
 
 
 @register.inclusion_tag('auctions/show_listings.html')
-def show_listings(request, listings: QuerySet, wished: List[bool]) -> dict:
+def show_listings(request, listings: QuerySet, watched: List[bool]) -> dict:
     return {
         "request": request,
         "listings": listings,
-        "wished": wished
+        "watched": watched
     }
 
 
