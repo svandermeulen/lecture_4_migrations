@@ -29,6 +29,9 @@
     <li class="nav-item">
         <a class="nav-link btn btn-basic" href="{% url 'auctions:index' %}">Active Listings</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link btn btn-basic" href="{% url 'auctions:categories' %}">Categories</a>
+    </li>
     {% if user.is_authenticated %}
         <div class="dropdown show">
             <a class="nav-link btn btn-basic dropdown-toggle" type="button" id="dropdownMenuButton"

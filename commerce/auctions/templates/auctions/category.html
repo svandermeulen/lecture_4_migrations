@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+{% load show_listings %}
+
+{% block body %}
+    {% if listings %}
+        <h2>Active listings with category: </h2>
+        <p>
+            <b>{{ category }}</b>
+        </p>
+        <hr>
+        {% show_listings request listings watched %}
+    {% endif %}
+
+    <a href="{% url 'auctions:index' %}">Go to active listings</a>
+
+{% endblock %}

@@ -7,10 +7,10 @@
 {% block body %}
 
     {% if not listing.active %}
-        <h2>Listing: {{ listing.title }}</h2>
+        <h2>{{ listing.title }}</h2>
         <span class="badge badge-pill badge-secondary">Closed</span>
     {% else %}
-        <h2>Listing: {{ listing.title }}</h2>
+        <h2>{{ listing.title }}</h2>
     {% endif %}
     <p><img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged"></p>
     <p id="description">{{ listing.description }}</p>

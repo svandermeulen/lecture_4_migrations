@@ -16,7 +16,7 @@ class AuctionListing(models.Model):
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=255)
     starting_bid = models.FloatField()
-    category = models.CharField(max_length=64)
+    category = models.CharField(max_length=64, default="No category listed")
     image_url = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
