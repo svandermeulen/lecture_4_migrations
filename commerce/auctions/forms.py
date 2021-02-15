@@ -27,6 +27,10 @@ class NewBidForm(ModelForm):
         }
 
 
+class NewCommentForm(Form):
+    comment = CharField(widget=Textarea, label="comment", initial="Write your comments here.")
+
+
 def main():
     pass
 

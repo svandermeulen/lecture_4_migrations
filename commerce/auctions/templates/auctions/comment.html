@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% if "edit" in request.path %}
+        <h2>Edit Comment:</h2>
+    {% else %}
+        <h2>Create Comment:</h2>
+    {% endif %}
+
+    <form action="{% url 'auctions:comment' listing_id %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {% if not field.is_hidden %}
+                    {{ field.errors }}
+                    {{ field.name.capitalize }}: <br>
+                    {{ field }}
+                {% else %}
+                    {{ field.as_hidden }}
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        {% if "edit" in request.path %}
+            <input type="hidden" name="comment_id" value={{ comment_id }}>
+            <input type="submit" class="btn btn-success" title="Overwrite" name="Overwrite" value="Save">
+        {% else %}
+            <input type="submit" class="btn btn-success" title="Save" name="Save" value="Save">
+        {% endif %}
+        <a href="{% url 'auctions:listing' listing_id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+{% endblock %}

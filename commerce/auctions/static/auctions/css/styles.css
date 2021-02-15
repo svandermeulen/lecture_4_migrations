@@ -47,3 +47,11 @@ textarea {
 .price_listing {
     font-weight: bold;
 }
+
+.comment-header {
+    font-size: smaller;
+}
+
+.comment-btn {
+    font-size: smaller;
+}

@@ -5,13 +5,30 @@
 {% endblock %}
 
 {% block body %}
+    <h2>
+        Listing: {{ listing.title }}
+        {% if not listing.active %}
+            <span class="badge badge-pill badge-danger badge-sm">Closed</span>
+        {% endif %}
 
-    {% if not listing.active %}
-        <h2>{{ listing.title }}</h2>
-        <span class="badge badge-pill badge-secondary">Closed</span>
-    {% else %}
-        <h2>{{ listing.title }}</h2>
-    {% endif %}
+        {% if user.is_authenticated %}
+            <form name="create_station" method="post" action="{% url "auctions:open_close" listing.id %}">
+                {% if listing.user.username == user.username %}
+                    {% csrf_token %}
+                    <a href="{% url "auctions:edit" listing.id %}" class="btn btn-primary btn-sm">Edit Auction</a>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                    {% if listing.active == False %}
+                        <input type="submit" class="btn btn-success btn-sm" value="Reopen Auction"/>
+                    {% else %}
+                        <input type="submit" class="btn btn-danger btn-sm" value="Close Auction"/>
+                    {% endif %}
+                {% endif %}
+            </form>
+        {% endif %}
+    </h2>
+
+    <hr>
+
     <p><img src="{{ listing.image_url }}" alt="No image url provided" id="img_enlarged"></p>
     <p id="description">{{ listing.description }}</p>
     <br>
@@ -44,33 +61,47 @@
     {% else %}
         {% if listing.get_latest_bid.user.username == user.username %}
             <p class="price_listing">You have won the auction with a bid of: ${{ listing.current_price }}</p>
-            {% else %}
+        {% else %}
             <p>This auction is closed at a price of: ${{ listing.current_price }}</p>
         {% endif %}
     {% endif %}
 
     <hr>
+
     <h4>Details:</h4>
     <ul>
         <li>Listed by: {{ listing.user.username }}</li>
-        <li>Listed on: {{ listing.date_creation|date:'D, M Y H:i:s'|title }}</li>
-        <li>Latest bid on: {{ listing.get_latest_bid.date_creation|date:'D, M Y H:i:s'|title }}</li>
+        <li>Listed on: {{ listing.date_creation|date:'D, d M Y H:i:s'|title }}</li>
+        <li>Latest bid on: {{ listing.get_latest_bid.date_creation|date:'D, d M Y H:i:s'|title }}</li>
         <li>Category: {{ listing.category }}</li>
     </ul>
 
-    {% if user.is_authenticated %}
-        {% if listing.user.username == user.username %}
-            <form name="create_station" method="post" action="{% url "auctions:open_close" listing.id %}">
-                {% csrf_token %}
-                <a href="{% url "auctions:edit" listing.id %}" class="btn btn-secondary">Edit</a>
-                <input type="hidden" name="next" value="{{ request.path }}">
-                {% if listing.active == False %}
-                    <input type="submit" class="btn btn-success" value="Reopen Auction"/>
-                {% else %}
-                    <input type="submit" class="btn btn-danger" value="Close Auction"/>
-                {% endif %}
-            </form>
-        {% endif %}
+    <hr>
+
+    <h4>Comments:</h4>
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="row justify-content-start">
+                <div class="col-3 text-justify">
+                    <div class="comment-header">{{ comment.user.username }}
+                        | {{ comment.date_creation|date:'D, d M Y H:i:s'|title }}</div>
+                    <p>{{ comment.comment }}</p>
+                    {% if comment.user.id == user.id %}
+                        <a class="comment-btn" href="{% url "auctions:edit_comment" comment.id listing.id %}">Edit</a>
+                        <a class="comment-btn" href="{% url "auctions:delete_comment" comment.id listing.id %}">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <div class="row justify-content-start">
+            <div class="col-3 text-justify">
+                <p>No comments yet</p>
+            </div>
+        </div>
     {% endif %}
+
+    <a href="{% url "auctions:comment" listing.id %}" class="btn btn-primary">Add Comment</a>
 
 {% endblock %}

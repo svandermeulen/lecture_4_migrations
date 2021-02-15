@@ -3,10 +3,7 @@
 
 {% block body %}
     {% if listings %}
-        <h2>Active listings with category: </h2>
-        <p>
-            <b>{{ category }}</b>
-        </p>
+        <h2>Active listings with category: <b>{{ category }}</b></h2>
         <hr>
         {% show_listings request listings watched %}
     {% endif %}

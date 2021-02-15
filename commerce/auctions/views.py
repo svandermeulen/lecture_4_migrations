@@ -10,8 +10,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .decorators import login_required_message_and_redirect
-from .forms import NewListingForm, NewBidForm
-from .models import User, AuctionListing, Bid, WatchList
+from .forms import NewListingForm, NewBidForm, NewCommentForm
+from .models import User, AuctionListing, Bid, WatchList, Comment
 
 
 def in_watchlist(request, listing: AuctionListing) -> bool:
@@ -178,9 +178,12 @@ def create_listing_view(request):
 
 
 def listing_view(request, listing_id: int):
+    listing = AuctionListing.objects.get(id=listing_id)
+    comments = Comment.objects.filter(listing=listing)
     context = {
-        "listing": AuctionListing.objects.get(id=listing_id),
-        "form": NewBidForm()
+        "listing": listing,
+        "form": NewBidForm(),
+        "comments": comments
     }
     return render(request, "auctions/listing.html", context=context)
 
@@ -275,3 +278,58 @@ def category_view(request, category: str):
     context = get_listings_context(request, listings=listings)
     context.update({"category": category})
     return render(request, "auctions/category.html", context=context)
+
+
+def create_comment(request, listing_id: int):
+    listing = AuctionListing.objects.get(id=listing_id)
+    if request.method == "POST":
+
+        form = NewCommentForm(request.POST)
+        if form.is_valid():
+
+            if request.POST.get("Save"):
+
+                comment_value = form.cleaned_data["comment"]
+
+                # Create new entry in the comment table
+                comment = Comment(
+                    comment=comment_value,
+                    user=request.user,
+                    listing=listing
+                )
+                comment.save()
+                return redirect("auctions:listing", listing_id)
+            elif request.POST.get("Overwrite"):
+                comment = Comment.objects.get(id=request.POST.get("comment_id"))
+                comment.comment = form.cleaned_data["comment"]
+                comment.save()
+                return redirect("auctions:listing", listing_id=listing.id)
+
+    context = {
+        "listing_id": listing_id,
+        "form": NewCommentForm()
+    }
+    return render(request, "auctions/comment.html", context=context)
+
+
+def edit_comment(request, listing_id: int, comment_id: str):
+    comment = Comment.objects.get(id=comment_id)
+
+    form = NewCommentForm(
+        initial={
+            "comment": comment.comment
+        }
+    )
+
+    context = {
+        "form": form,
+        "listing_id": listing_id,
+        "comment_id": comment_id
+    }
+    return render(request, "auctions/comment.html", context)
+
+
+def delete_comment(request, listing_id: str, comment_id: str):
+    comment = Comment.objects.get(id=comment_id)
+    comment.delete()
+    return redirect("auctions:listing", listing_id=listing_id)
