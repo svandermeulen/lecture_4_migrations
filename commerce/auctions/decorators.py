@@ -5,7 +5,7 @@ Date: 05/02/2021
 """
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import REDIRECT_FIELD_NAME, decorators
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import resolve_url
 from functools import wraps

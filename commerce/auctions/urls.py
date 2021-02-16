@@ -20,10 +20,10 @@ urlpatterns = [
     path("mybiddings", views.my_biddings_view, name="my_biddings"),
     path("listing/<listingconv:listing_id>", views.listing_view, name="listing"),
     path("edit/listing/<listingconv:listing_id>", views.edit_listing_view, name="edit"),
-    path("close/listing/<listingconv:listing_id>", views.change_listing_acitivty_view, name="open_close"),
+    path("close/listing/<listingconv:listing_id>", views.change_listing_activty_view, name="open_close"),
     path("categories", views.categories_view, name="categories"),
     path("category/<category>", views.category_view, name="category"),
-    path("comment/listing/<listingconv:listing_id>", views.create_comment, name="comment"),
+    path("comment/listing/<listingconv:listing_id>", views.comment.create_comment, name="comment"),
     path("comment/edit/<str:comment_id>/listing/<listingconv:listing_id>", views.edit_comment, name="edit_comment"),
     path("comment/delete/<str:comment_id>/listing/<listingconv:listing_id>", views.delete_comment, name="delete_comment")
 ]
